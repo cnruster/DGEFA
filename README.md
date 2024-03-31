@@ -1,7 +1,10 @@
 **DGESL : LU decomposition with partial pivoting**
+
 **DGESL and DGESLT : Perform backsubstitution**
 
+
 **This library is the highest quality code when you need to solve a general linear system!**
+
 **You get a deep understanding of Gaussian elimination by reading this code**
 
 It is even (slightly) better than the orginal LinPack code which is in Fortran.

@@ -6,11 +6,11 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
+int idamax(int n, double const dx[], int incx);
 void dscal(int n, double da, double dx[], int incx);
 void daxpy(int n, double da, double const dx[], int incx, double dy[], int incy);
-int idamax(int n, double const dx[], int incx);
 double ddot(int n, double const dx[], int incx, double const dy[], int incy);
 
 int dgefa(double A[], int lda, int n, int ipvt[]);
@@ -20,4 +20,4 @@ void dgeslt(double const A[], int lda, int n, int const ipvt[], double b[]);
 
 #ifdef __cplusplus
 }
-#endif 
+#endif

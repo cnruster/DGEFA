@@ -50,39 +50,39 @@ Software 5, 3 (September 1979), pp. 308 - 323.
 */
 int idamax(int n, double const dx[], int incx)
 {
-	if (n <= 1) {
-		return n-1;
-	}
+    if (n <= 1) {
+        return n-1;
+    }
 
-	double dmax, xmag;
-	int i, ix;
-	int idm = 0;
+    double dmax, xmag;
+    int i, ix;
+    int idm = 0;
 
-	if (incx != 1) {
-		// Code for increments not equal to 1.
-		ix = (incx < 0) ? (1 - n) * incx : 0;
-		dmax = fabs(dx[ix]);
+    if (incx != 1) {
+        // Code for increments not equal to 1.
+        ix = (incx < 0) ? (1 - n) * incx : 0;
+        dmax = fabs(dx[ix]);
 
-		for (i = 1; i < n; i++) {
-			ix += incx;
-			if ((xmag = fabs(dx[ix])) > dmax) {
-				idm = i;
-				dmax = xmag;
-			}
-		}
-	}
-	else {
-		// Code for increments equal to 1.
-		dmax = fabs(dx[0]);
-		for (i = 1; i < n; i++) {
-			if ((xmag = fabs(dx[i])) > dmax) {
-				idm = i;
-				dmax = xmag;
-			}
-		}
-	}
+        for (i = 1; i < n; i++) {
+            ix += incx;
+            if ((xmag = fabs(dx[ix])) > dmax) {
+                idm = i;
+                dmax = xmag;
+            }
+        }
+    }
+    else {
+        // Code for increments equal to 1.
+        dmax = fabs(dx[0]);
+        for (i = 1; i < n; i++) {
+            if ((xmag = fabs(dx[i])) > dmax) {
+                idm = i;
+                dmax = xmag;
+            }
+        }
+    }
 
-	return idm;
+    return idm;
 }
 
 /***BEGIN PROLOGUE  DSCAL
@@ -129,31 +129,31 @@ Software 5, 3 (September 1979), pp. 308 - 323.
 */
 void dscal(int n, double da, double dx[], int incx)
 {
-	if (n <= 0) {
-	}
-	else if (incx != 1) {
-		// Code for increment not equal to 1.
-		int i, ix;
-		ix = (incx < 0) ? (1 - n) * incx : 0;
-		for (i = 0; i < n; i++) {
-			dx[ix] *= da;
-			ix += incx;
-		}
-	}
-	else {
-		int i, m = n % 5;
-		for (i = 0; i < m; i++) {
-			dx[i] *= da;
-		}
-		// Clean-up loop so remaining vector length is a multiple of 5.
-		for (; i < n; i += 5) {
-			dx[i] *= da;
-			dx[i + 1] *= da;
-			dx[i + 2] *= da;
-			dx[i + 3] *= da;
-			dx[i + 4] *= da;
-		}
-	}
+    if (n <= 0) {
+    }
+    else if (incx != 1) {
+        // Code for increment not equal to 1.
+        int i, ix;
+        ix = (incx < 0) ? (1 - n) * incx : 0;
+        for (i = 0; i < n; i++) {
+            dx[ix] *= da;
+            ix += incx;
+        }
+    }
+    else {
+        int i, m = n % 5;
+        for (i = 0; i < m; i++) {
+            dx[i] *= da;
+        }
+        // Clean-up loop so remaining vector length is a multiple of 5.
+        for (; i < n; i += 5) {
+            dx[i] *= da;
+            dx[i+1] *= da;
+            dx[i+2] *= da;
+            dx[i+3] *= da;
+            dx[i+4] *= da;
+        }
+    }
 }
 
 /*
@@ -203,45 +203,45 @@ Software 5, 3 (September 1979), pp. 308 - 323.
 */
 double ddot(int n, double const dx[], int incx, double const dy[], int incy)
 {
-	double dotprod = 0.0;
+    double dotprod = 0.0;
 
-	if (n <= 0) {
-	}
-	else if (incx != incy || incx <= 0) {
-		// Code for unequal or nonpositive increments
-		int ix, iy, i;
+    if (n <= 0) {
+    }
+    else if (incx != incy || incx <= 0) {
+        // Code for unequal or nonpositive increments
+        int ix, iy, i;
 
-		ix = (incx < 0) ? (1 - n) * incx : 0;
-		iy = (incy < 0) ? (1 - n) * incy : 0;
+        ix = (incx < 0) ? (1 - n) * incx : 0;
+        iy = (incy < 0) ? (1 - n) * incy : 0;
 
-		for (i = 0; i < n; i++) {
-			dotprod += dx[ix] * dy[iy];
-			ix += incx;
-			iy += incy;
-		}
-	}
-	else if (incx == 1) {
-		// Code for both increments equal to 1
-		int i, m = n % 5;
-		for (i = 0; i < m; i++) {
-			dotprod += dx[i] * dy[i];
-		}
+        for (i = 0; i < n; i++) {
+            dotprod += dx[ix] * dy[iy];
+            ix += incx;
+            iy += incy;
+        }
+    }
+    else if (incx == 1) {
+        // Code for both increments equal to 1
+        int i, m = n % 5;
+        for (i = 0; i < m; i++) {
+            dotprod += dx[i] * dy[i];
+        }
 
-		// Clean-up loop so remaining vector length is a multiple of 5
-		for (; i < n; i += 5) {
-			dotprod += dx[i] * dy[i] + dx[i + 1] * dy[i + 1] + dx[i + 2] * dy[i + 2]
-				+ dx[i + 3] * dy[i + 3] + dx[i + 4] * dy[i + 4];
-		}
-	}
-	else {
-		// Code for equal, positive, non-unit increments
-		int i, ns = n * incx;
-		for (i = 0; i < ns; i += incx) {
-			dotprod += dx[i] * dy[i];
-		}
-	}
+        // Clean-up loop so remaining vector length is a multiple of 5
+        for (; i < n; i += 5) {
+            dotprod += dx[i] * dy[i] + dx[i+1] * dy[i+1] + dx[i+2] * dy[i+2]
+                + dx[i+3] * dy[i+3] + dx[i+4] * dy[i+4];
+        }
+    }
+    else {
+        // Code for equal, positive, non-unit increments
+        int i, ns = n * incx;
+        for (i = 0; i < ns; i += incx) {
+            dotprod += dx[i] * dy[i];
+        }
+    }
 
-	return dotprod;
+    return dotprod;
 }
 
 /***BEGIN PROLOGUE  DAXPY
@@ -292,226 +292,226 @@ Software 5, 3 (September 1979), pp. 308 - 323.
 */
 void daxpy(int n, double da, double const dx[], int incx, double dy[], int incy)
 {
-	if (n <= 0 || da == 0.0) {
-	}
-	else if (incx != incy || incx <= 0) {
-		// Code for unequal or nonpositive increments
-		int ix, iy, i;
+    if (n <= 0 || da == 0.0) {
+    }
+    else if (incx != incy || incx <= 0) {
+        // Code for unequal or nonpositive increments
+        int ix, iy, i;
 
-		ix = (incx < 0) ? (1 - n) * incx : 0;
-		iy = (incy < 0) ? (1 - n) * incy : 0;
+        ix = (incx < 0) ? (1 - n) * incx : 0;
+        iy = (incy < 0) ? (1 - n) * incy : 0;
 
-		for (i = 0; i < n; i++) {
-			dy[iy] += da*dx[ix];
-			ix += incx;
-			iy += incy;
-		}
-	}
-	else if (incx == 1) {
-		// Code for both increments equal to 1
-		int i, m = n % 4;
-		for (i = 0; i < m; i++) {
-			dy[i] += da*dx[i];
-		}
+        for (i = 0; i < n; i++) {
+            dy[iy] += da*dx[ix];
+            ix += incx;
+            iy += incy;
+        }
+    }
+    else if (incx == 1) {
+        // Code for both increments equal to 1
+        int i, m = n % 4;
+        for (i = 0; i < m; i++) {
+            dy[i] += da*dx[i];
+        }
 
-		// Clean-up loop so remaining vector length is a multiple of 4
-		for (; i < n; i += 4) {
-			dy[i] += da*dx[i];
-			dy[i+1] += da*dx[i+1];
-			dy[i+2] += da*dx[i+2];
-			dy[i+3] += da*dx[i+3];
-		}
-	}
-	else {
-		// Code for equal, positive, non-unit increments.
-		int i, ns = n * incx;
-		for (i = 0; i < ns; i += incx) {
-			dy[i] += da*dx[i];
-		}
-	}
+        // Clean-up loop so remaining vector length is a multiple of 4
+        for (; i < n; i += 4) {
+            dy[i] += da*dx[i];
+            dy[i+1] += da*dx[i+1];
+            dy[i+2] += da*dx[i+2];
+            dy[i+3] += da*dx[i+3];
+        }
+    }
+    else {
+        // Code for equal, positive, non-unit increments.
+        int i, ns = n * incx;
+        for (i = 0; i < ns; i += incx) {
+            dy[i] += da*dx[i];
+        }
+    }
 }
 
 /*
 dgefa factors a double precision matrix by gaussian elimination.
 
-   on entry
+    on entry
 
-      A       double precision(lda, n)
-              the matrix to be factored.
+        A       double precision(lda, n)
+                the matrix to be factored.
 
-      lda     integer
-              the leading dimension of the array A
+        lda     integer
+                the leading dimension of the array A
 
-      n       integer
-              the order of the matrix A
+        n       integer
+                the order of the matrix A
 
-   on return
+    on return
 
-      A       an upper triangular matrix and the multipliers
-              which were used to obtain it.
-              the factorization can be written  A = L*U  where
-              L is a product of permutation and unit lower
-              triangular matrices and U is upper triangular.
+        A       an upper triangular matrix and the multipliers
+                which were used to obtain it.
+                the factorization can be written  A = L*U  where
+                L is a product of permutation and unit lower
+                triangular matrices and U is upper triangular.
 
-      ipvt    integer(n-1)
-              an integer vector of pivot indices.
+        ipvt    integer(n-1)
+                an integer vector of pivot indices.
 
-      info    integer
-              = 0  normal value.
-              = k  if  u(k,k) .eq. 0.0 . This is not an error
-                   condition for this subroutine, but it does
-                   indicate that dgesl or dgedi will divide by zero
-                   if called.
+        info    integer
+                = 0  normal value.
+                = k  if  u(k,k) .eq. 0.0 . This is not an error
+                    condition for this subroutine, but it does
+                    indicate that dgesl or dgedi will divide by zero
+                    if called.
 
-   linpack. this version dated 08/14/78 .
-   cleve moler, university of new mexico, argonne national lab.
-   Translated into C by Yiping Cheng, 27/03/2024
+    linpack. this version dated 08/14/78 .
+    cleve moler, university of new mexico, argonne national lab.
+    Translated into C by Yiping Cheng, 27/03/2024
 */
 
 int dgefa(double A[], int lda, int n, int ipvt[])
 {
-	double tmp, *colk, *colj;
-	int k, m, j;
-	int nm1 = n-1;
-	int info = 0;
+    double tmp, *colk, *colj;
+    int k, m, j;
+    int nm1 = n-1;
+    int info = 0;
 
-	// Gaussian elimination with partial pivoting.
+    // Gaussian elimination with partial pivoting.
 
-	for (k = 0; k < nm1; k++) {
-		colk = &A[lda*k];
-		// Find pivot index
-		m = k + idamax(n-k, &colk[k], 1);
-		ipvt[k] = m;
+    for (k = 0; k < nm1; k++) {
+        colk = &A[lda*k];
+        // Find pivot index
+        m = k + idamax(n-k, &colk[k], 1);
+        ipvt[k] = m;
 
-		// Zero pivot implies this row already triangularized.
-		tmp = colk[m];
-		if (tmp == 0.) {
-			info = k+1;
-			continue;
-		}
+        // Zero pivot implies this row already triangularized.
+        tmp = colk[m];
+        if (tmp == 0.) {
+            info = k+1;
+            continue;
+        }
 
-		// Interchange if necessary.
-		if (m != k) {
-			colk[m] = colk[k];
-			colk[k] = tmp;
-		}
+        // Interchange if necessary.
+        if (m != k) {
+            colk[m] = colk[k];
+            colk[k] = tmp;
+        }
 
-		// Compute multipliers.
-		dscal(n-k-1, -1./tmp, &colk[k+1], 1);
+        // Compute multipliers.
+        dscal(n-k-1, -1./tmp, &colk[k+1], 1);
 
-		// Column elimination with row indexing.
-		for (j=k+1; j<n; j++) {
-			colj = &A[lda*j];
-			tmp = colj[m];
-			if (m != k) {
-				colj[m] = colj[k];
-				colj[k] = tmp;
-			}
-			daxpy(n-k-1, tmp, &colk[k+1], 1, &colj[k+1], 1);
-		}
-	}
+        // Column elimination with row indexing.
+        for (j=k+1; j<n; j++) {
+            colj = &A[lda*j];
+            tmp = colj[m];
+            if (m != k) {
+                colj[m] = colj[k];
+                colj[k] = tmp;
+            }
+            daxpy(n-k-1, tmp, &colk[k+1], 1, &colj[k+1], 1);
+        }
+    }
 
-	if (A[nm1 + lda*nm1] == 0.)
-		info = n;
+    if (A[nm1 + lda*nm1] == 0.)
+        info = n;
 
-	return info;
+    return info;
 }
 
 /*
-	dgesl solves the double precision system
-	A*x = b
-	using the factors computed by dgefa.
+    dgesl solves the double precision system
+    A*x = b
+    using the factors computed by dgefa.
 
-	on entry
+    on entry
 
-	   A       double precision(lda, n)
-			   the output from dgefa.
+        A       double precision(lda, n)
+                the output from dgefa.
 
-	   n       integer
-			   the order of the matrix  A .
+        n       integer
+                the order of the matrix  A .
 
-	   ipvt    integer(n-1)
-			   the pivot vector from dgefa.
+        ipvt    integer(n-1)
+                the pivot vector from dgefa.
 
-	   b       double precision(n)
-			   the right hand side vector.
+        b       double precision(n)
+                the right hand side vector.
 
-	on return
+    on return
 
-	   b       the solution vector x.
+        b       the solution vector x.
 
-	error condition
+    error condition
 
-	   A division by zero will occur if the input factor contains A
-	   zero on the diagonal. technically this indicates singularity
-	   but it is often caused by improper arguments or improper
-	   setting of lda. it will not occur if the subroutines are
-	   called correctly and if dgefa has set info.eq. 0 .
+        A division by zero will occur if the input factor contains A
+        zero on the diagonal. technically this indicates singularity
+        but it is often caused by improper arguments or improper
+        setting of lda. it will not occur if the subroutines are
+        called correctly and if dgefa has set info.eq. 0 .
 
-	linpack. this version dated 08/14/78 .
-	cleve moler, university of new mexico, argonne national lab.
+    linpack. this version dated 08/14/78 .
+    cleve moler, university of new mexico, argonne national lab.
     Translated into C by Yiping Cheng, 27/03/2024
 */
 
 void dgesl(double const A[], int lda, int n, int const ipvt[], double b[])
 {
-	double tmp;
-	double const *colk;
-	int k, m;
-	int nm1 = n-1;
+    double tmp;
+    double const *colk;
+    int k, m;
+    int nm1 = n-1;
 
-	// solve  A * x = b
+    // solve  A * x = b
 
-	// first solve  L*y = b
-	for (k=0; k<nm1; k++) {
-		m = ipvt[k];
-		tmp = b[m];
-		if (m!=k) {
-			b[m] = b[k];
-			b[k] = tmp;
-		}
+    // first solve  L*y = b
+    for (k=0; k<nm1; k++) {
+        m = ipvt[k];
+        tmp = b[m];
+        if (m!=k) {
+            b[m] = b[k];
+            b[k] = tmp;
+        }
 
-		daxpy(n-k-1, tmp, &A[k+1 + lda*k], 1, &b[k+1], 1);
-	}
+        daxpy(n-k-1, tmp, &A[k+1 + lda*k], 1, &b[k+1], 1);
+    }
 
-	// now solve  U* x = y
-	for (; k>=0; k--) {
-		colk = &A[lda*k];
-		b[k] /= colk[k];
-		daxpy(k, -b[k], colk, 1, b, 1);
-	}
+    // now solve  U*x = y
+    for (; k>=0; k--) {
+        colk = &A[lda*k];
+        b[k] /= colk[k];
+        daxpy(k, -b[k], colk, 1, b, 1);
+    }
 }
 
 
 /*
-	dgeslt solves the double precision system
-	A'*x = b
-	using the factors computed by dgefa.
+    dgeslt solves the double precision system
+    A'*x = b
+    using the factors computed by dgefa.
     Translated into C by Yiping Cheng, 27/03/2024
 */
 void dgeslt(double const A[], int lda, int n, int const ipvt[], double b[])
 {
-	int k, m;
-	double tmp;
-	double const *colk;
+    int k, m;
+    double tmp;
+    double const *colk;
 
-	// solve trans(A)*x = b
+    // solve trans(A)*x = b
 
-	//  First solve trans(U)*y = b
-	for (k=0; k<n; k++) {
-		colk = &A[lda*k];
-		tmp = ddot(k, colk, 1, b, 1);
-		b[k] = (b[k] - tmp) / colk[k];
-	}
+    //  First solve trans(U)*y = b
+    for (k=0; k<n; k++) {
+        colk = &A[lda*k];
+        tmp = ddot(k, colk, 1, b, 1);
+        b[k] = (b[k] - tmp) / colk[k];
+    }
 
-	// Now solve trans(L)* x = y
-	for (k=n-2; k>=0; k--) {
-		b[k] += ddot(n-k-1, &A[k+1 + lda*k], 1, &b[k+1], 1);
-		m = ipvt[k];
-		if (m != k) {
-			tmp = b[m];
-			b[m] = b[k];
-			b[k] = tmp;
-		}
-	}
+    // Now solve trans(L)* x = y
+    for (k=n-2; k>=0; k--) {
+        b[k] += ddot(n-k-1, &A[k+1 + lda*k], 1, &b[k+1], 1);
+        m = ipvt[k];
+        if (m != k) {
+            tmp = b[m];
+            b[m] = b[k];
+            b[k] = tmp;
+        }
+    }
 }

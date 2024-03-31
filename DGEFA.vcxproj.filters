@@ -21,10 +21,10 @@
     <ClCompile Include="blas_cyp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ilaran.c">
+    <ClCompile Include="Test_LP_CYP.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Test_LP_CYP.c">
+    <ClCompile Include="ilaran.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

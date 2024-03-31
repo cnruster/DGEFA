@@ -1,4 +1,4 @@
-**DGESL : LU decomposition with partial pivoting**
+**DGEFA : LU decomposition with partial pivoting**
 
 **DGESL and DGESLT : Perform backsubstitution**
 

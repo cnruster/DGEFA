@@ -1,3 +1,11 @@
+**DGESL : LU decomposition with partial pivoting**
+**DGESL and DGESLT : Perform backsubstitution**
+
+**This library is the highest quality code when you need to solve a general linear system!**
+**You get a deep understanding of Gaussian elimination by reading this code**
+
+It is even (slightly) better than the orginal LinPack code which is in Fortran.
+
 **Cautions for using DGEFA+DGESL+DGESLT into your application**
 1) The functions are translated from Fortran, so the matrices should be stored in column-major mode. That is, the address of A[i,j] is &A[i+lda*j]
 2) lda is the leading dimension of a matrix A. Usually lda is the number of rows of A, but not always. If A is a submatrix of a matrix B, then lda may be the number of rows of B.

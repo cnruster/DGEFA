@@ -371,13 +371,12 @@ dgefa factors a double precision matrix by gaussian elimination.
 int dgefa(double A[], int lda, int n, int ipvt[])
 {
     double tmp, *colk, *colj;
-    int k, m, j;
-    int nm1 = n-1;
+    int k, kpp, m, j;
     int info = 0;
 
     // Gaussian elimination with partial pivoting.
 
-    for (k = 0; k < nm1; k++) {
+    for (k=0, kpp=1; kpp < n; k=kpp++) {
         colk = &A[lda*k];
         // Find pivot index
         m = k + idamax(n-k, &colk[k], 1);
@@ -386,7 +385,7 @@ int dgefa(double A[], int lda, int n, int ipvt[])
         // Zero pivot implies this row already triangularized.
         tmp = colk[m];
         if (tmp == 0.) {
-            info = k+1;
+            info = kpp;
             continue;
         }
 
@@ -397,21 +396,22 @@ int dgefa(double A[], int lda, int n, int ipvt[])
         }
 
         // Compute multipliers.
-        dscal(n-k-1, -1./tmp, &colk[k+1], 1);
+        dscal(n-kpp, -1./tmp, &colk[kpp], 1);
 
         // Column elimination with row indexing.
-        for (j=k+1; j<n; j++) {
+        for (j=kpp; j<n; j++) {
             colj = &A[lda*j];
             tmp = colj[m];
             if (m != k) {
                 colj[m] = colj[k];
                 colj[k] = tmp;
             }
-            daxpy(n-k-1, tmp, &colk[k+1], 1, &colj[k+1], 1);
+            daxpy(n-kpp, tmp, &colk[kpp], 1, &colj[kpp], 1);
         }
     }
 
-    if (A[nm1 + lda*nm1] == 0.)
+    // now k becomes n-1
+    if (A[k + lda*k] == 0.)
         info = n;
 
     return info;
@@ -457,13 +457,12 @@ void dgesl(double const A[], int lda, int n, int const ipvt[], double b[])
 {
     double tmp;
     double const *colk;
-    int k, m;
-    int nm1 = n-1;
+    int k, kpp, m;
 
     // solve  A * x = b
 
     // first solve  L*y = b
-    for (k=0; k<nm1; k++) {
+    for (k = 0, kpp = 1; kpp < n; k = kpp++) {
         m = ipvt[k];
         tmp = b[m];
         if (m!=k) {
@@ -471,7 +470,7 @@ void dgesl(double const A[], int lda, int n, int const ipvt[], double b[])
             b[k] = tmp;
         }
 
-        daxpy(n-k-1, tmp, &A[k+1 + lda*k], 1, &b[k+1], 1);
+        daxpy(n-kpp, tmp, &A[kpp + lda*k], 1, &b[kpp], 1);
     }
 
     // now solve  U*x = y
@@ -491,7 +490,7 @@ void dgesl(double const A[], int lda, int n, int const ipvt[], double b[])
 */
 void dgeslt(double const A[], int lda, int n, int const ipvt[], double b[])
 {
-    int k, m;
+    int k, kpp, m;
     double tmp;
     double const *colk;
 
@@ -505,8 +504,8 @@ void dgeslt(double const A[], int lda, int n, int const ipvt[], double b[])
     }
 
     // Now solve trans(L)* x = y
-    for (k=n-2; k>=0; k--) {
-        b[k] += ddot(n-k-1, &A[k+1 + lda*k], 1, &b[k+1], 1);
+    for (kpp=n-1, k=n-2; k>=0; kpp=k--) {
+        b[k] += ddot(n-kpp, &A[kpp + lda*k], 1, &b[kpp], 1);
         m = ipvt[k];
         if (m != k) {
             tmp = b[m];

@@ -46,9 +46,8 @@ int rand_int(int min, int max)
 
 double rand_double()
 {
-    return (double)rand_int(-5, 5) / (double)rand_int(1, 10);
+    return (double)rand_int(-200, 200) / (double)rand_int(1, 100);
 }
-
 
 void rand_vector(double* v, int n)
 {
@@ -91,62 +90,11 @@ void print_matrix(double* A, int lda, int n, char* name)
     printf("];\n");
 }
 
-void print_p_matrix(double* A, int lda, int n, int* iprm, char* name)
-{
-    int i, j;
-
-    printf("%s=[", name);
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < n; j++) {
-            printf("%.18f, ", A[iprm[i]+lda*j]);
-        }
-        printf(";\n");
-    }
-    printf("];\n");
-}
-
-void print_p_lower_matrix(double* A, int lda, int n, int* iprm, char* name)
-{
-    int i, j;
-
-    printf("%s=[", name);
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < i; j++) {
-            printf("%.18f, ", A[iprm[i] + lda*j]);
-        }
-        printf("1, ");
-        for (j = i + 1; j < n; j++) {
-            printf("0, ");
-        }
-        printf(";\n");
-    }
-    printf("];\n");
-}
-
-void print_p_upper_matrix(double* A, int lda, int n, int* iprm, char* name)
-{
-    int i, j;
-
-    printf("%s=[", name);
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < i; j++) {
-            printf("0, ");
-        }
-        for (j = i; j < n; j++) {
-            printf("%.18f, ", A[iprm[i] + lda*j]);
-        }
-        printf(";\n");
-    }
-    printf("];\n");
-}
-
 #define N    500
-int n = 10;
+int n = 12;
 
-double A[N*N];
-double b[N], x[N];
-int ipvt[N-1];
-int iprm[N];
+double A[N*N], b[N], x[N];
+int ipvt[N-1], iprm[N];
 
 void test_LP()
 {
@@ -154,12 +102,11 @@ void test_LP()
 
     for (k = 0; k < 20; k++) {
         rand_matrix(A, N, n);
-
         print_matrix(A, N, n, "A");
 
         info = dgefa(A, N, n, ipvt);
         if (info) {
-            printf("Info=%d;\n", info);
+            puts("% A is singular");
             continue;
         }
 
@@ -185,12 +132,11 @@ void test_CYP()
 
     for (k = 0; k < 20; k++) {
         rand_matrix(A, N, n);
-
         print_matrix(A, N, n, "A");
 
         info = CYP_dgefa(A, N, n, iprm);
         if (info) {
-            printf("Info=%d;\n", info);
+            puts("% A is singular");
             continue;
         }
 
@@ -324,9 +270,11 @@ void compare_LP_CYP_times()
         time_cyp_dgesl = time_CYP_dgesl(n, count)-time_rm;
         time_lp_dgeslt = time_LP_dgeslt(n, count)-time_rm;
         time_cyp_dgeslt = time_CYP_dgeslt(n, count)-time_rm;
-        printf("n=%d: time_rm=%f, time_lp_dgefa=%f, time_cyp_dgefa=%f, "
-            "time_lp_dgesl=%f, time_cyp_dgesl=%f, time_lp_dgeslt=%f, time_cyp_dgeslt=%f\n",
-            n, time_rm, time_lp_dgefa, time_cyp_dgefa, time_lp_dgesl, time_cyp_dgesl,
+        printf("n=%d: time_lp_dgefa=%f, time_cyp_dgefa=%f, "
+            "time_lp_dgesl=%f, time_cyp_dgesl=%f, "
+            "time_lp_dgeslt=%f, time_cyp_dgeslt=%f\n",
+            n, time_lp_dgefa, time_cyp_dgefa,
+            time_lp_dgesl, time_cyp_dgesl,
             time_lp_dgeslt, time_cyp_dgeslt);
     }
 }

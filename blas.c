@@ -374,7 +374,7 @@ int dgefa(double A[], int lda, int n, int ipvt[])
     int k, kpp, m, j;
     int info = 0;
 
-    // Gaussian elimination with partial pivoting.
+    // Gaussian elimination with partial pivoting
 
     for (k=0, kpp=1; kpp < n; k=kpp++) {
         colk = &A[lda*k];
@@ -382,31 +382,38 @@ int dgefa(double A[], int lda, int n, int ipvt[])
         m = k + idamax(n-k, &colk[k], 1);
         ipvt[k] = m;
 
-        // Zero pivot implies this row already triangularized.
-        tmp = colk[m];
-        if (tmp == 0.) {
+        if ((tmp = colk[m]) == 0.) {
+            // Zero pivot implies this row already triangularized
             info = kpp;
             continue;
         }
 
-        // Interchange if necessary.
         if (m != k) {
+            // Interchange
             colk[m] = colk[k];
             colk[k] = tmp;
-        }
 
-        // Compute multipliers.
-        dscal(n-kpp, -1./tmp, &colk[kpp], 1);
+            // Compute multipliers and scale
+            dscal(n-kpp, -1./tmp, &colk[kpp], 1);
 
-        // Column elimination with row indexing.
-        for (j=kpp; j<n; j++) {
-            colj = &A[lda*j];
-            tmp = colj[m];
-            if (m != k) {
+            // Column elimination with row indexing
+            for (j = kpp; j<n; j++) {
+                colj = &A[lda*j];
+                tmp = colj[m];
                 colj[m] = colj[k];
                 colj[k] = tmp;
+                daxpy(n-kpp, tmp, &colk[kpp], 1, &colj[kpp], 1);
             }
-            daxpy(n-kpp, tmp, &colk[kpp], 1, &colj[kpp], 1);
+        }
+        else {
+            // Compute multipliers and scale
+            dscal(n-kpp, -1./tmp, &colk[kpp], 1);
+
+            // Column elimination with row indexing
+            for (j = kpp; j<n; j++) {
+                colj = &A[lda*j];
+                daxpy(n-kpp, colj[m], &colk[kpp], 1, &colj[kpp], 1);
+            }
         }
     }
 

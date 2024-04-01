@@ -2,7 +2,7 @@
 
 **DGESL and DGESLT : Backsubstitution**
 
-Together they can solve any general linear system.
+Together they can solve any general linear system Ax=b or A'x=b.
 
 
 **This library is the highest quality code when you need to solve a general linear system!**

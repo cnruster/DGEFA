@@ -5,9 +5,13 @@
 Together they can solve any general linear system Ax=b or A'x=b.
 
 *D = Double precision*
+
 *GE = Gaussian Elimination*
+
 *FA = FActorization*
+
 *SL = SoLution*
+
 *T = Transpose*
 
 **This library is the highest quality code when you need to solve a general linear system!**
